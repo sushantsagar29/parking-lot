@@ -7,7 +7,7 @@ import java.time.Instant
 
 class ParkingLot(
     val vehicleParkingSpots: List<VehicleParkingSpot>,
-    val bookedParkingSpots: HashMap<Int, ParkingSpot>,
+    val spotNumberToBookedParkingSpotMap: HashMap<Int, ParkingSpot>,
     val feesCalculator: FeesCalculator
 ) {
     private var ticketNumberCounter: Int = 0
@@ -24,7 +24,7 @@ class ParkingLot(
         receiptNumberCounter += 1
         val bookingEndTime = Instant.now()
 
-        freeParkingSpot(parkingTicket)
+        vacateParkingSpot(parkingTicket)
 
         return ParkingReceipt(
             receiptNumber = receiptNumberCounter,
@@ -41,18 +41,17 @@ class ParkingLot(
     private fun bookParkingSpot(vehicleType: Vehicle): ParkingSpot {
         val vehicleParkingSpot = getVehicleParkingSpot(vehicleType)
         val bookedParkingSpot = vehicleParkingSpot.park()
-        bookedParkingSpots[bookedParkingSpot.spotNumber] = bookedParkingSpot
+        spotNumberToBookedParkingSpotMap[bookedParkingSpot.spotNumber] = bookedParkingSpot
         return bookedParkingSpot
     }
 
-    private fun freeParkingSpot(parkingTicket: ParkingTicket) {
+    private fun vacateParkingSpot(parkingTicket: ParkingTicket) {
         val vehicleParkingSpot = getVehicleParkingSpot(parkingTicket.vehicle)
-        val bookedParkingSpot = bookedParkingSpots[parkingTicket.spotNumber]!!
-        bookedParkingSpots.remove(parkingTicket.spotNumber)
+        val bookedParkingSpot = spotNumberToBookedParkingSpotMap[parkingTicket.spotNumber]!!
+        spotNumberToBookedParkingSpotMap.remove(parkingTicket.spotNumber)
         vehicleParkingSpot.unPark(bookedParkingSpot)
     }
 
     private fun getVehicleParkingSpot(vehicleType: Vehicle) =
-        (vehicleParkingSpots.firstOrNull { it.getSupportedVehicles().contains(vehicleType) }
-            ?: throw VehicleNotSupportedException())
+        (vehicleParkingSpots.firstOrNull { it.isVehicleSupported(vehicleType) } ?: throw VehicleNotSupportedException())
 }

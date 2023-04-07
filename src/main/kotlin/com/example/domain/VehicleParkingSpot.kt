@@ -5,7 +5,9 @@ import java.util.Stack
 
 interface VehicleParkingSpot {
     val vacantParkingSpots: Stack<ParkingSpot>
-    fun getSupportedVehicles(): List<Vehicle> = emptyList()
+    val supportedVehicles: List<Vehicle>
+
+    fun isVehicleSupported(vehicle: Vehicle): Boolean = supportedVehicles.contains(vehicle)
 
     fun park(): ParkingSpot {
         if (vacantParkingSpots.isEmpty())

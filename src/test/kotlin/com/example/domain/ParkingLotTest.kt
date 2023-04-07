@@ -26,7 +26,7 @@ class ParkingLotTest : DescribeSpec({
             val twoWheelerParkingSpot = create2TwoWheelerWheelerParkingSpot()
             parkingLot = ParkingLot(
                 vehicleParkingSpots = listOf(twoWheelerParkingSpot),
-                bookedParkingSpots = hashMapOf(),
+                spotNumberToBookedParkingSpotMap = hashMapOf(),
                 feesCalculator = MallParkingFeesCalculator()
             )
         }
